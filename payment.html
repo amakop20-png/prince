@@ -1,0 +1,223 @@
+<!DOCTYPE>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">
+    <title>payment</title>
+    <link rel="icon" type="image/jpeg" sizes="32x32" href="image/favicon-removebg-preview.png">
+  </head>
+  <body>
+    <div class="payment-container">
+      <form action="">
+  <img src="image/favicon-removebg-preview.png" alt="Logo" class="payment-logo">
+  <form id="billingForm">
+<div class="row">
+    <!-- Billing Column -->
+    <div class="column">
+      <h4 class="title">Billing Information</h4>
+
+      <div class="input-box">
+        <span>Full Name</span>
+        <input type="full name" placeholder="John Mathew" required>
+      </div>
+
+      <div class="input-box">
+        <span>Email</span>
+        <input type="email" placeholder="johnmathew@example.com" required>
+      </div>
+
+      <div class="input-box">
+        <span>Address</span>
+        <input type="address" placeholder="123 Main Street" required>
+      </div>
+
+      <div class="input-box">
+        <span>City</span>
+        <input type="city" placeholder="New York" required>
+      </div>
+
+      <div class="input-box">
+        <span>Zip Code</span>
+        <input type="zip code" placeholder="10001" required>
+      </div>
+    </div>
+
+    <!-- Payment Column -->
+    <div class="column">
+       <div class="input-box">
+        <span>Card Acceptance</span>
+        <img src="image/imgcards.png" alt="Card Acceptance" class="card-img">
+      </div>
+
+
+      
+
+<div id="payment-request-button">Google Pay</div>
+
+      <div class="input-box">
+        <h4 class="title">Payment Details</h4>
+        <select id="planSelect" required>
+          <option value="">Select Plan</option>
+          <option value="29">Monthly - $29</option>
+          <option value="79">Quarterly - $79</option>
+          <option value="299">Yearly - $299</option>
+        </select>
+      </div>
+
+      <div class="input-box">
+        <span>Credit Card Number</span>
+         <input type="card number" placeholder="1234 5678 9012 3456" required>
+      </div>
+        <div class="input-box">
+        <span>Exp Month</span>
+        <input type="expiration   Month" placeholder="MM/YY" required>
+      </div>
+        <div class="jes">
+      <div class="input-box">
+        <span>Exp Date</span>
+        <input type="expiration date" placeholder="MM/YY" required>
+      </div>
+
+       
+
+      <div class="input-box">
+        <span>CVV</span>
+        <input type="cvv" placeholder="123" required>
+      </div>
+      <div class="input-box">
+  <span>Zip Code</span>
+  <input type="zip code" placeholder="10001" required>
+</div>
+
+    </div>
+    </div>
+  </div>
+      <button class="btn">Pay Now</button>
+
+  </form>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js">
+    // Wait for DOM
+document.addEventListener("DOMContentLoaded", function () {
+
+  const form = document.querySelector("#billingForm");
+  const cardNumber = document.querySelector('input[placeholder="1234 5678 9012 3456"]');
+  const expDate = document.querySelectorAll('input[placeholder="MM/YY"]');
+  const cvv = document.querySelector('input[placeholder="123"]');
+  const payBtn = document.querySelector("button");
+
+  // Format Card Number (adds spaces every 4 digits)
+  cardNumber.addEventListener("input", function () {
+    let value = this.value.replace(/\D/g, "").substring(0, 16);
+    value = value.replace(/(.{4})/g, "$1 ").trim();
+    this.value = value;
+  });
+
+  // Format Expiry Date (MM/YY)
+  expDate.forEach(input => {
+    input.addEventListener("input", function () {
+      let value = this.value.replace(/\D/g, "").substring(0, 4);
+      if (value.length >= 3) {
+        value = value.replace(/(\d{2})(\d{1,2})/, "$1/$2");
+      }
+      this.value = value;
+    });
+  });
+
+  // CVV: numbers only, max 3 digits
+  cvv.addEventListener("input", function () {
+    this.value = this.value.replace(/\D/g, "").substring(0, 3);
+  });
+
+  // Form Validation
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const name = form.querySelector('input[placeholder="John Mathew"]').value.trim();
+    const email = form.querySelector('input[placeholder="johnmathew@example.com"]').value.trim();
+    const address = form.querySelector('input[placeholder="123 Main Street"]').value.trim();
+    const city = form.querySelector('input[placeholder="New York"]').value.trim();
+    const zip = form.querySelectorAll('input[placeholder="10001"]')[0].value.trim();
+
+    if (!name || !email || !address || !city || !zip) {
+      alert("Please fill all billing fields.");
+      return;
+    }
+
+    if (cardNumber.value.replace(/\s/g, "").length < 16) {
+      alert("Invalid card number.");
+      return;
+    }
+
+    if (!expDate[0].value || expDate[0].value.length < 5) {
+      alert("Invalid expiry date.");
+      return;
+    }
+
+    if (cvv.value.length < 3) {
+      alert("Invalid CVV.");
+      return;
+    }
+
+    // If everything is valid
+    alert("Payment Successful ✅");
+    form.reset();
+  });
+
+});
+paymentRequest.on('paymentmethod', async (ev) => {
+      const { clientSecret } = await createPaymentIntent();
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        { payment_method: ev.paymentMethod.id },
+        { handleActions: false }
+      );
+
+      if (error) {
+        ev.complete('fail');
+        alert(error.message);
+      } else {
+        ev.complete('success');
+        alert('Payment successful! ✅');
+      }
+    });
+  // ----------------- Google Pay Integration -----------------
+  const paymentRequest = stripe.paymentRequest({
+    country: 'US',
+    currency: 'usd',
+    total: { label: 'Total', amount: 5000 }, // $50
+    requestPayerName: true,
+    requestPayerEmail: true,
+    googlePay: true
+  });
+
+  const prButton = elements.create('paymentRequestButton', { paymentRequest });
+  paymentRequest.canMakePayment().then(result => {
+    if (result) prButton.mount('#payment-request-button');
+    else document.getElementById('payment-request-button').style.display = 'none';
+  });
+
+  paymentRequest.on('paymentmethod', async ev => {
+    const res = await fetch('/create-payment-intent', { method: 'POST' });
+    const { clientSecret } = await res.json();
+    const { error, paymentIntent } = await stripe.confirmCardPayment(
+      clientSecret,
+      { payment_method: ev.paymentMethod.id },
+      { handleActions: false }
+    );
+    if (error) { ev.complete('fail'); alert(error.message); }
+    else { ev.complete('success'); alert("Payment Successful ✅"); }
+  });
+
+
+
+
+  </script>
+  </body>
+</html>
